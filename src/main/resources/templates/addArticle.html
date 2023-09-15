@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org./1999/xhtml" xmlns:sec="http://www.w3.org./1999/xhtml">
+<head th:replace="common/header :: common-header" />
+
+<body>
+  <div th:replace="adminHome :: navbarAdmin"> </div>
+  <div class="container page-content">
+    <form th:action="@{/article/add}" id="my-form" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+      <fieldset>
+        <legend class="center-block">
+          New Article Information
+        </legend>
+        <div class="form-group row">
+          <label for="title" class="col-2 col-form-label text-right">Title</label>
+          <div class="col-6">
+            <input type="text" class="form-control" id="title" name="title" required pattern="[A-Za-z0-9\s]+"  title="Title is required" >
+            <span id="title-error" class="error-message" style="display:none; color:red;">Please enter a valid title (alphanumeric characters and spaces only)</span>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="category" class="col-2 col-form-label text-right">Category</label>
+          <div class="col-6">
+            <input type="text" class="form-control" id="categories" name="category" data-role="tagsinput" required>
+            <span id="category-error" class="error-message" style="display:none; color:red;">Please enter a valid category (alphanumeric characters and spaces only)</span>
+          </div>
+          <div class="col-4">
+            <button type=button class="btn btn-primary btn-category badge badge-pill badge-primary mr-1 mb-1" th:each="item : ${allCategories}" 
+            th:text="${item}" th:id="item+${category}"></button>           
+          </div>          
+        </div>
+        <div class="form-group row">
+          <label for="brand" class="col-2 col-form-label text-right">Sizes</label>
+          <div class="col-6">
+            <input type="text" class="form-control" id="sizes" name="size" data-role="tagsinput">
+          </div>
+          <div class="col-4">
+            <button type=button class="btn btn-primary btn-size" th:each="item : ${#lists.sort(allSizes)}" th:text="${item}" th:id="size+${item}"></button>           
+          </div>          
+        </div>
+        <div class="form-group row">
+          <label for="brand" class="col-2 col-form-label text-right">Brand</label>
+          <div class="col-6">
+            <input type="text" class="form-control" id="brands" name="brand" data-role="tagsinput">
+          </div>
+          <div class="col-4">
+            <button type=button class="btn btn-primary btn-brand badge badge-pill badge-primary mr-1 mb-1" th:each="item : ${allBrands}" 
+            th:text="${#strings.capitalize(item)}" th:id="brand+${item}"></button>           
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="price" class="col-2 col-form-label text-right">Price</label>
+          <div class="col-6 input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">$</span>
+            </div>
+            <input th:value="${article.price}" type="number" name="price" step="0.1"
+  				class="form-control" id="price" placeholder="List Price" />
+          </div>
+        </div>
+        
+        <div class="form-group row">
+          <label for="stock" class="col-2 col-form-label text-right">Available stock</label>
+          <div class="col-6">
+            <input th:value="${article.stock}" type="number"
+                        name="stock" class="form-control" id="stock"
+                        placeholder="Number of in-stock" />
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="picture" class="col-2 col-form-label text-right">Article image link</label>
+          <div class="col-6">
+<!--            <input type="file" id="image" name="image" accept="image/*" required>-->
+           <input type="file" accept="image/*" class="form-control" id="file" name="file">
+            <img src="" id="image-preview" style="max-width: 150px; max-height: 150px;">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="offset-2 col-6">
+          	<button type="submit" class="btn btn-success">Add Article</button>
+              <a class="btn btn-danger" th:href="@{/admin}">Cancel</a>
+          </div>
+        </div>
+    </fieldset>
+  </form>
+  </div>
+
+  <div th:replace="common/header :: body-scripts"> </div>
+  <script src="/js/tagsinput-custom.js"></script>
+<!--  <script>-->
+<!--    window.onload = function() {-->
+<!--      var titleInput = document.getElementById('title');-->
+<!--      var titleError = document.getElementById('title-error');-->
+<!--      function validateTitle() {-->
+<!--        if (titleInput.validity.valid) {-->
+<!--          titleError.style.display = 'none';-->
+<!--        } else if (titleInput.value.length > 10) {-->
+<!--          titleError.textContent = 'Please enter a valid title (alphanumeric characters and spaces only, up to 10 characters)';-->
+<!--          titleError.style.display = 'block';-->
+<!--        }-->
+<!--      }-->
+<!--      titleInput.addEventListener('input', function() {-->
+<!--        validateTitle();-->
+<!--      });-->
+<!--      titleInput.addEventListener('invalid', function(event) {-->
+<!--        event.preventDefault();-->
+<!--        titleError.style.display = 'block';-->
+<!--      });-->
+
+<!--      titleInput.addEventListener('focus', function() {-->
+<!--        if (!titleInput.validity.valid) {-->
+<!--          titleError.style.display = 'block';-->
+<!--        }-->
+<!--      });-->
+<!--      titleInput.addEventListener('blur', function() {-->
+<!--        validateTitle();-->
+<!--      });-->
+
+
+<!--    }-->
+<!--  </script>-->
+  <script>
+    window.onload = function() {
+      var titleInput = document.getElementById('title');
+      var titleError = document.getElementById('title-error');
+      var categoryInput = document.getElementById('categories');
+      var categoryError = document.getElementById('category-error');
+
+      function validateTitle() {
+        if (titleInput.validity.valid) {
+          titleError.style.display = 'none';
+        } else if (titleInput.value.length > 10) {
+          titleError.textContent = 'Please enter a valid title (alphanumeric characters and spaces only, up to 10 characters)';
+          titleError.style.display = 'block';
+        }
+      }
+
+      function validateCategory() {
+        if (categoryInput.validity.valid) {
+          categoryError.style.display = 'none';
+        } else {
+          categoryError.textContent = 'Please enter a valid category (alphanumeric characters and spaces only)';
+          categoryError.style.display = 'block';
+        }
+      }
+
+      titleInput.addEventListener('input', function() {
+        validateTitle();
+      });
+
+      titleInput.addEventListener('invalid', function(event) {
+        event.preventDefault();
+        titleError.style.display = 'block';
+      });
+
+      titleInput.addEventListener('focus', function() {
+        if (!titleInput.validity.valid) {
+          titleError.style.display = 'block';
+        }
+      });
+
+      titleInput.addEventListener('blur', function() {
+        validateTitle();
+      });
+
+      categoryInput.addEventListener('input', function() {
+        validateCategory();
+      });
+
+      categoryInput.addEventListener('invalid', function(event) {
+        event.preventDefault();
+        categoryError.style.display = 'block';
+      });
+
+      categoryInput.addEventListener('focus', function() {
+        if (!categoryInput.validity.valid) {
+          categoryError.style.display = 'block';
+        }
+      });
+
+      categoryInput.addEventListener('blur', function() {
+        validateCategory();
+      });
+    }
+  </script>
+  <script>
+    const fileInput = document.getElementById('file');
+    const imagePreview = document.getElementById('image-preview');
+
+    fileInput.addEventListener('change', function(event) {
+      const file1 = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.addEventListener('load', function(event) {
+        imagePreview.src = event.target.result;
+      });
+
+      reader.readAsDataURL(file1);
+    });
+  </script>
+</body>
+</html>
